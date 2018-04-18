@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			html,body{
+				overflow: hidden;
+				width: 100%;
+				height: 100%;
+				display: flex;
+				perspective:1200px;
+				transform-style:perserve-3d;
+				background: #333;
+			}
+			#box{
+				position: relative;
+				width: 133px;
+				height: 200px;
+				border:1px solid red;
+				margin:auto;
+				
+				transform-style: preserve-3d;
+				transform: rotateX(-20deg);
+				color:yellow;
+				font-weight: 700;
+				text-align: center;
+				font-size:20px;
+				line-height: 200px;
+				cursor: pointer;
+			}
+			#box img{
+				position: absolute;
+				top:0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				cursor: pointer;
+			}
+			#box p{
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin-top: -400px;
+				margin-left: -400px;
+				width: 800px;
+				height: 800px;
+				/*background: red;*/
+				border-radius: 50%;
+				transform: rotateX(90deg) translateZ(-100px);
+			}
+			/*
+			#box img:nth-child(1){
+				
+				transform:  rotateY(45deg) translateZ(200px);
+			}
+			#box img:nth-child(2){
+				transform: translateZ(200px) rotateY(100deg);
+			}
+			#box img:nth-child(3){
+				transform: translateZ(200px) rotateY(130deg);
+			}
+			#box img:nth-child(4){
+				transform:translateZ(200px) rotateY(150deg);
+			}
+			#box img:nth-child(5){
+				transform:translateZ(200px) rotateY(60deg);
+			}*/
+	</style>
+</head>
+<body>
+	<div id="box">
+	3D图片旋转
+		<img src="img/1.jpg" alt="">
+		<img src="img/2.jpg" alt="">
+		<img src="img/3.jpg" alt="">
+		<img src="img/4.jpg" alt="">
+		<img src="img/5.jpg" alt="">
+		<img src="img/6.jpg" alt="">
+		<img src="img/7.jpg" alt="">
+		<img src="img/8.jpg" alt="">
+		<img src="img/9.jpg" alt="">
+		<img src="img/10.jpg" alt="">
+		<p></p>
+	</div>
+	<script>
+		window.onload = function(){
+			var oBox = document.getElementById("box"),
+				aImg = oBox.getElementsByTagName("img");
+			// var n = 0;
+
+				for(var i = 0;i < aImg.length;i++){
+					aImg[i].style.transform = "rotateY( "+i*36+"deg) translateZ(300px)";
+					aImg[i].style.transition = "transform 1s "+(aImg.length-i)*0.1+"s";
+				}
+				var nowX,
+					nowY,
+					lastX,
+					lastY,
+					desX,
+					desY,
+					rotX = 0,
+					rotY = 0,
+					time;
+				document.onmousedown = function(e){
+					clearInterval(time)
+					var e = e || event;
+					lastX = e.clientX;  //上一次的X轴坐标
+					lastY = e.clientY; //上一次的Y轴坐标
+					this.onmousemove = function(e){
+						// n++;
+						// oBox.style.transform = "rotateX(-20deg) rotateY("+n+"deg)"
+						var e = e ||event;
+						//当前点的坐标
+						nowX = e.clientX;
+						nowY = e.clientY;
+						//当前点的坐标和前一点的坐标差值
+						desX = nowX-lastX;
+						desY = nowY-lastY;
+						//怎么旋转
+						//鼠标沿着水平方向移动  box要rotateY旋转
+						//鼠标沿着竖直方向移动  box要rotateX旋转
+						//鼠标移动的越快，两点间的距离越大，旋转的度数越大
+						//旋转角度要一直累加
+						rotX -= desY*0.1;
+						rotY += desX*0.1;
+						oBox.style.transform = "rotateX("+rotX+"deg) rotateY("+rotY+"deg)"
+
+
+						/*var x = e.clientX;
+						var y = e.clientY;
+						var div = document.createElement("div");
+						div.style.cssText = "width:5px;height:5px;background:red;position:absolute;left:"+x+"px;top:"+y+"px"
+						this.body.appendChild(div)*/
+
+
+						//更新前一点的坐标
+						lastX = nowX;
+						lastY = nowY;
+					}
+					this.onmouseup = function(){
+						this.onmousemove = this.onmouseup = null;
+
+						//惯性  度数递减  接近于0
+						time = setInterval(function(){
+							desX *= 0.95;
+							desY *= 0.95;
+							rotX -= desY*0.1;
+							rotY += desX*0.1;
+							oBox.style.transform = "rotateX("+rotX+"deg) rotateY("+rotY+"deg)"
+							if(Math.abs(desX) < 0.5 && Math.abs(desY) < 0.5){
+								clearInterval(time)
+							}
+							console.log(desX)
+						},13)
+					}
+					return false;
+				}
+		}
+	</script>
+</body>
+</html>
